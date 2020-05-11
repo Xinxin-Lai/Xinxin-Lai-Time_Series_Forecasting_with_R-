@@ -1,0 +1,177 @@
+# ---------------Chapter2 Exercise--------------
+library(ggfortify)
+library(forecast)
+library(fpp2)
+
+# 2.Download the file tute1.csv from the book website, open it in Excel (or some other spreadsheet application), 
+#   and review its contents. You should find four columns of information. Columns B through D each contain a 
+#   quarterly series, labelled Sales, AdBudget and GDP. Sales contains the quarterly sales for a small company 
+#   over the period 1981-2005. AdBudget is the advertising budget and GDP is the gross domestic product. All series have been adjusted for inflation.
+
+# a. You can read the data into R with the following script:
+tute1 <- read.csv("tute1.csv",header=TRUE)
+View(tute1)
+
+# b. Convert data to time series:
+mytimeseries <- ts(tute1[,-1],start=1981,frequency = 4)
+# (The [,-1] removes the first column which contains the quarters as we don't need them now.)
+
+# c. Construct time series plots of each of the three series
+autoplot(mytimeseries,facets=TRUE)
+# Check what happens when you don't include facets=TRUE.
+autoplot(mytimeseries)
+
+# 3. Download some monthly Australian retail data from the book website. 
+#    These represent retail sales in various categories for different Australian
+#    states, and are stored in a MS-Excel file.
+# a. You can read the data into R with the following script:
+#    skip=1 bc this excel has 2 header rows
+retaildata <- readxl::read_excel("retail.xlsx", skip=1)
+View(retaildata)
+
+# b. convert into time series:
+myts <- ts(retaildata[,"A3349335T"],
+           frequency=12, start=c(1982,4))
+
+# C. Explore data:
+autoplot(myts,facets = TRUE)
+ggseasonplot(myts, facets = TRUE)
+ggsubseriesplot(myts, facets = TRUE)
+gglagplot(myts)
+ggAcf(myts)
+
+# 4. ----------- Create tie plots for following series:
+# - Use help() to find out about the data in each series.
+help(bicoal)
+help(chicken)
+help(dole)
+help(usdeaths)
+help(lynx)
+help(goog)
+help(writing)
+help(fancy)
+help(a10)
+help(h02)
+
+# - For the goog plot, modify the axis labels and title:
+autoplot(goog) +
+  ggtitle("Daily closing stock prices of Google Inc.") +
+  xlab("Time") + 
+  ylab("Price(Unit:US$)")
+
+# 5. Use the ggseasonplot and ggsubseriesplot functions to explore the seasonal patterns in the following time series: writing, fancy, a10, h02.
+# - What can you say about the seasonal patterns?
+# - Can you identify any unusual years?
+
+ggseasonplot(writing)
+ggsubseriesplot(writing)
+# Sales amount plunge in August every year
+
+ggseasonplot(fancy)
+ggsubseriesplot(fancy)
+# In Dec., since 1992 the month sales for souvier shop in Australia spikes compared to previous years
+
+ggseasonplot(a10)
+ggsubseriesplot(a10)
+# In Feb, the amount of antidiabetes monthly scripts drops annually
+
+ggseasonplot(h02)
+ggsubseriesplot(h02)
+# Similar to antidiabetes, the amount of corticosteroid scripts also drops but more dramatically inFeb. annualy
+
+# -6. Use the following graphics functions: autoplot(), ggseasonplot(), ggsubseriesplot(), gglagplot(), ggAcf() and explore features from the following time series: hsales, usdeaths, bricksq, sunspotarea, gasoline.
+
+# - Can you spot any seasonality, cyclicity and trend?
+# - What do you learn about the series?
+
+help(hsales)
+autoplot(hsales)
+ggseasonplot(hsales)
+ggsubseriesplot(hsales)
+gglagplot(hsales)
+ggAcf(hsales, lag.max = 400)
+# can catch seasonality and cyclicity. The cysle period is about 5 years
+
+help("usdeaths")
+autoplot(usdeaths)
+ggseasonplot(usdeaths)
+ggsubseriesplot(usdeaths)
+gglagplot(usdeaths)
+ggAcf(usdeaths, lag.max = 60)
+# there is seasonality and cyclicity. The cycle period is per year, July got the highest death rate while Feb got the lowest
+
+help("bricksq")
+autoplot(bricksq)
+ggseasonplot(bricksq)
+ggsubseriesplot(bricksq)
+gglagplot(bricksq)
+ggAcf(bricksq, lag.max = 200)
+# Can spot mild seasonality and strong trend
+
+help("sunspotarea")
+autoplot(sunspotarea)
+#ggseasonplot(sunspotarea)
+# not seasonal, can't draw it
+#ggsubseriesplot(sunspotarea)
+# not seasonal, useless to draw it
+gglagplot(sunspotarea)
+ggAcf(sunspotarea, lag.max = 50)
+# Can spot strong cyclicity.The cycle period is about 5 years.
+
+help("gasoline")
+autoplot(gasoline)
+ggseasonplot(gasoline)
+#ggsubseriesplot(gasoline)
+# The number of weeks is 52 and it looked like it is too much for subseriesplot
+gglagplot(gasoline)
+ggAcf(gasoline, lag.max = 1000)
+# There is an overall uward trend but not strong one, but no seasonality or cyclicity .
+
+# 7.The arrivals data set comprises quarterly international arrivals (in thousands) to Australia from Japan, New Zealand, UK and the US.
+
+# - Use autoplot, ggseasonplot and ggsubseriesplot to compare the differences between the arrivals from these four countries.
+# - Can you identify any unusual observations?
+str(arrivals)
+autoplot(arrivals)
+# NZ has the biggest increasing arrives since 1980
+# UK shows the biggest quarterly fluctuation
+
+ggseasonplot(arrivals[,"Japan"])
+ggseasonplot(arrivals[,"NZ"])
+ggseasonplot(arrivals[,"UK"])
+ggseasonplot(arrivals[,"US"])
+
+ggsubseriesplot(arrivals[,"Japan"])
+ggsubseriesplot(arrivals[,"NZ"])
+ggsubseriesplot(arrivals[,"UK"])
+ggsubseriesplot(arrivals[,"US"])
+# The arrivals from Jp decrease a log in 2nd quarter compared to other quarters
+# The arrivals from NZ are highest in 3rd quarter and lowest in 1st quarter
+# The arrivals from UK and US are low in 2nd & 3rd quarter and high in 1st and 4th quarters
+
+# 9. The pigs data shows the monthly total number of pigs slaughtered in Victoria, Australia, from Jan 1980 to Aug 1995.
+# - Use mypigs <- window(pigs, start=1990) to select the data starting from 1990. Use autoplot and ggAcf for mypigs series
+# - and compare these to white noise plots from Figures 2.17 and 2.18.
+# - Figure 2.17
+#[Fig 2.17 White Noise Time Series](https://otexts.com/fpp2/wn.html)
+
+#-  Figure 2.18
+# [Fig 2.18 ACF of White Noise Time Series](https://otexts.com/fpp2/wn.html)
+help("pigs")
+mypigs <- window(pigs, start=1990)
+str(mypigs)
+
+autoplot(mypigs)
+ggAcf(mypigs)
+# can spot 3 periods that are outside these bounds which is >3%, thus mypigs isn't white noise probably.
+
+# 10. dj contains 292 consecutive trading days of the Dow Jones Index. Use ddj <- diff(dj) to compute the daily changes in the index. 
+# -Plot ddj and its ACF. Do the changes in the Dow Jones Index look like white noise?
+
+help(dj)
+
+ddj <- diff(dj)
+str(ddj)
+autoplot(ddj)
+ggAcf(ddj)
+# Only one period is outside the bounds which much <3%, thus ddj can be white noise 
