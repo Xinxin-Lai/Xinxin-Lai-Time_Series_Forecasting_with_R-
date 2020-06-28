@@ -304,3 +304,7 @@ stlf_fancy <- stlf(fancy,
                    method = "rwdrift")
 autoplot(stlf_fancy)
 # The prediction intervals increase dramatically because of Box-Cox transformation. But without the transformation, the forecasts are unreasonable.
+
+# References:
+# 1.https://github.com/JehyeonHeo/Forecasting_with_R_practices/blob/master/Chapter3.rmd
+# 2.https://otexts.com/fpp2/toolbox.html
